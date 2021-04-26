@@ -47,6 +47,11 @@
             <artifactId>bag</artifactId>
             <version>${bedrock.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.orekit</groupId>
+            <artifactId>orekit</artifactId>
+            <version>10.3</version>
+        </dependency>
     </dependencies>
 
     <build>

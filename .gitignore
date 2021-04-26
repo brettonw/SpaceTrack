@@ -20,3 +20,6 @@ target
 # IntelliJ
 .idea
 *.iml
+
+# download the orekit-data-master file from https://www.orekit.org/site-orekit-10.0/configuration.html
+orekit-data-master

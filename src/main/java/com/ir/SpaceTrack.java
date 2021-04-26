@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.orekit.propagation.analytical.tle.TLE;
+
 public class SpaceTrack {
     private static final String BASE_URL = "https://www.space-track.org";
     private static final String LOGIN_PATH = "/ajaxauth/login";
@@ -59,16 +61,21 @@ public class SpaceTrack {
     // a) NULL - something went wrong with the post or the response
     // b) {"error":"You must be logged in to complete this action"} - your credentials are invalid
     // c) [{"CCSDS_OMM_VERS":"2.0","COMMENT":"GENERATED VIA SPAC... - an array of the tracking elements requested
-    public byte[] doQuery (String query) {
+    public String doQuery (String query) {
         var postData = buildQueryObject (query).toString(MimeType.URL).getBytes(StandardCharsets.UTF_8);
-        return doPost (BASE_URL + LOGIN_PATH, postData);
+        return new String (doPost (BASE_URL + LOGIN_PATH, postData), StandardCharsets.UTF_8);
     }
 
     // return a bag object representing the requested object
-    public BagObject getGp (int noradCatalogId) {
+    public BagObject getGP (int noradCatalogId) {
         var bagArray = BagArrayFrom.url(BASE_URL + LOGIN_PATH,
                 buildQueryObject("gp/NORAD_CAT_ID/" + noradCatalogId),
                 MimeType.URL);
         return ((bagArray != null) && (bagArray.getCount() > 0)) ? bagArray.getBagObject(0) : null;
+    }
+
+    public TLE getTLE (int noradCatalogId) {
+        var tle = getGP(noradCatalogId);
+        return (tle != null) ? new TLE (tle.getString("TLE_LINE1"), tle.getString("TLE_LINE2")) : null;
     }
 }
